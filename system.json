@@ -1,7 +1,7 @@
 {
   "id": "l5r4-enhanced",
   "title": "L5R",
-  "description": "Système indépendant L5R quatrième édition. Adaptation Foundry VTT v14 en préparation.",
+  "description": "L5R quatrième édition pour Foundry VTT v14 — système indépendant maintenu par Tonio.",
   "authors": [
     {
       "name": "Tonio (misterWhite25)",
@@ -14,9 +14,9 @@
   ],
   "url": "https://github.com/misterWhite25/L5R",
   "compatibility": {
-    "minimum": 13,
-    "verified": 13,
-    "maximum": 13
+    "minimum": 14,
+    "verified": "14.367",
+    "maximum": 14
   },
   "esmodules": [
     "dist/l5r4-enhanced.js"
@@ -95,5 +95,5 @@
     }
   ],
   "license": "MIT",
-  "version": "3.2.1"
+  "version": "3.3.0-beta.1"
 }

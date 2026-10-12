@@ -150,7 +150,7 @@ async function applyProneCondition(actor) {
     await actor.createEmbeddedDocuments("ActiveEffect", [
       {
         name: `${autoPrefix}: ${proneName}`,
-        icon: iconPath("prone.webp"),
+        img: iconPath("prone.webp"),
         statuses: ["prone"],
         flags: {
           [SYS_ID]: {

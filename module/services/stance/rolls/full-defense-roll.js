@@ -125,13 +125,13 @@ export async function triggerFullDefenseRoll(actor, sys) {
 
     const content = await R(CHAT_TEMPLATES.fullDefenseRoll, templateData);
     const messageData = {
-      user: game.user.id,
+      author: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor }),
       content: content,
       sound: CONFIG.sounds.dice
     };
 
-    ChatMessage.create(messageData);
+    await roll.toMessage(messageData);
 
     // Recalculate derived stats (Armor TN) with new Full Defense bonus
     actor.prepareData();

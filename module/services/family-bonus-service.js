@@ -1,3 +1,4 @@
+import { effectChanges, isAdditiveChange } from "../utils/active-effects.js";
 /**
  * Family Bonus Service
  *
@@ -89,12 +90,12 @@ export class FamilyBonusService {
 
       for (const effect of familyItem.effects ?? []) {
         // Only process effects that transfer to the actor (not temporary/suppressed effects)
-        if (effect?.transfer !== true) {
+        if (effect?.transfer !== true || effect.disabled || effect.isSuppressed) {
           continue;
         }
 
-        for (const change of effect.changes ?? []) {
-          if (change?.key === effectKey && change?.mode === CONST.ACTIVE_EFFECT_MODES.ADD) {
+        for (const change of effectChanges(effect)) {
+          if (change?.key === effectKey && isAdditiveChange(change)) {
             const value = Number(change?.value ?? 0);
             // Only accept positive bonuses - negative values would be penalties, not family bonuses
             if (Number.isFinite(value) && value > 0) {
@@ -139,12 +140,12 @@ export class FamilyBonusService {
 
       for (const effect of familyItem.effects ?? []) {
         // Only process effects that transfer to the actor (not temporary/suppressed effects)
-        if (effect?.transfer !== true) {
+        if (effect?.transfer !== true || effect.disabled || effect.isSuppressed) {
           continue;
         }
 
-        for (const change of effect.changes ?? []) {
-          if (change?.mode !== CONST.ACTIVE_EFFECT_MODES.ADD) {
+        for (const change of effectChanges(effect)) {
+          if (!isAdditiveChange(change)) {
             continue;
           }
 

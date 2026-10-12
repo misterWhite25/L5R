@@ -1,3 +1,4 @@
+import { effectChanges, isAdditiveChange } from "./active-effects.js";
 /**
  * @module xp-calculations
  * @description Experience point cost calculations for L5R4 character advancement.
@@ -139,10 +140,10 @@ function getCreationBonusInternal(actor, effectMatcher, legacyMatcher) {
       let ae = 0;
       for (const eff of doc.effects ?? []) {
         // Only process transferred effects (apply to actor)
-        if (eff?.transfer !== true) {
+        if (eff?.transfer !== true || eff.disabled || eff.isSuppressed) {
           continue;
         }
-        for (const ch of eff?.changes ?? []) {
+        for (const ch of effectChanges(eff)) {
           if (effectMatcher(ch)) {
             const v = toNumber(ch?.value, 0);
             if (Number.isFinite(v)) {
@@ -209,7 +210,7 @@ export function getCreationFreeBonus(actor, key) {
   return getCreationBonusInternal(
     actor,
     // Match Active Effect for this trait
-    ch => ch?.key === `system.traits.${key}` && ch?.mode === CONST.ACTIVE_EFFECT_MODES.ADD,
+    ch => ch?.key === `system.traits.${key}` && isAdditiveChange(ch),
     // Match legacy bonus for this trait
     (tKey, amt) => tKey === key && Number.isFinite(amt)
   );
@@ -233,7 +234,7 @@ export function getCreationFreeBonusVoid(actor) {
     // Match Active Effect for Void (rank or value)
     ch =>
       (ch?.key === "system.rings.void.rank" || ch?.key === "system.rings.void.value") &&
-      ch?.mode === CONST.ACTIVE_EFFECT_MODES.ADD,
+      isAdditiveChange(ch),
     // Match legacy bonus for Void
     (tKey, amt) => tKey === "void" && Number.isFinite(amt)
   );

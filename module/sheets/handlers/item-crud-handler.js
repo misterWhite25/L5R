@@ -187,14 +187,14 @@ export class ItemCRUDHandler {
 
     // Skip confirmation if Shift key is held
     if (!event.shiftKey) {
-      const confirmed = await Dialog.confirm({
-        title: game.i18n.localize("l5r4.ui.dialogs.deleteItem.title"),
+      const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: { title: game.i18n.localize("l5r4.ui.dialogs.deleteItem.title") },
         content: `<p>${game.i18n.format("l5r4.ui.dialogs.deleteItem.content", {
           name: item.name
         })}</p>`,
-        yes: () => true,
-        no: () => false,
-        defaultYes: false
+        yes: { callback: () => true },
+        no: { callback: () => false },
+        rejectClose: false
       });
 
       if (!confirmed) {

@@ -1,6 +1,6 @@
 {
   "name": "l5r4-enhanced",
-  "version": "3.2.1",
+  "version": "3.3.0-beta.1",
   "description": "L5R, fourth edition system for Foundry VTT",
   "author": "Tonio (misterWhite25)",
   "license": "MIT",
@@ -36,7 +36,8 @@
     "test:ui": "vitest --ui tests/unit",
     "test:coverage": "vitest run --coverage tests/unit",
     "pretest": "npm run deps:circular",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:foundry-v14": "node scripts/test-foundry-v14.cjs"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "1.0.0",
@@ -47,6 +48,7 @@
     "husky": "9.0.11",
     "lint-staged": "15.2.0",
     "madge": "8.0.0",
+    "playwright": "1.62.1",
     "prettier": "3.1.0",
     "sass": "1.69.5",
     "stylelint": "16.25.0",

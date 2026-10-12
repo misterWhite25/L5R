@@ -173,9 +173,8 @@ export async function WeaponRoll({
     }
   );
 
-  return ChatMessage.create({
+  return roll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
-    content: html,
-    style: CONST.CHAT_MESSAGE_STYLES.OTHER
+    content: html
   });
 }

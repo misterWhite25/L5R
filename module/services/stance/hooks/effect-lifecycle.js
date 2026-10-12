@@ -204,14 +204,14 @@ export async function onPreCreateActiveEffect(effect, _data, _options, _userId) 
         // to avoid overwriting existing Active Effect changes (e.g., trait modifications)
         const updateData = {
           name: templateData.name,
-          icon: templateData.icon,
+          img: templateData.img,
           flags: templateData.flags || {}
         };
 
         // Only update changes array if template provides changes
         // Otherwise preserve any existing changes on the effect
-        if (templateData.changes !== undefined) {
-          updateData.changes = templateData.changes;
+        if (templateData.system !== undefined) {
+          updateData.system = templateData.system;
         }
 
         effect.updateSource(updateData);

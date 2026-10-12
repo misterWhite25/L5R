@@ -6,7 +6,11 @@ Développé et maintenu par **Tonio (misterWhite25)** avec l'assistance de **Cod
 
 ## État du projet
 
-Le code importé déclare une compatibilité Foundry v13. La migration v14 reste à réaliser et à valider : aucune version v14 prête à installer n'est encore publiée. L'identifiant technique `l5r4-enhanced` est conservé à ce stade pour préserver les références existantes.
+La préversion **3.3.0-beta.1** cible **Foundry VTT v14**, testée sous **14.367**. Elle n'est pas compatible v13. L'identifiant technique `l5r4-enhanced` reste conservé pour les références des documents et des mondes.
+
+Validation : **1 023 tests unitaires** et **13 scénarios navigateur** dans un monde v14 isolé, sans erreur JavaScript relevée. Les mondes existants v13, les compendiums externes et les modules optionnels ne sont pas encore validés. Sauvegarder un monde avant toute migration.
+
+Cette branche est une préversion de développement, sans release installable publiée. Voir [les instructions de test local](docs/foundry-v14.md).
 
 ## Indépendance et crédits
 

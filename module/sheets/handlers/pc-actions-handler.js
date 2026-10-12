@@ -154,11 +154,11 @@ export class PcActionsHandler {
     }
 
     // Confirm with dialog
-    const confirmed = await Dialog.confirm({
-      title: "Spend Void Point",
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Spend Void Point" },
       content: "<p>Spend a Void Point to increase Armor TN by +10 for 1 round?</p>",
-      yes: () => true,
-      no: () => false
+      yes: { callback: () => true },
+      no: { callback: () => false }
     });
 
     if (!confirmed) {

@@ -61,8 +61,7 @@ export async function renderItemChatCard(item) {
 
   return ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: item.actor }),
-    rollMode: game.settings.get("core", "rollMode"),
     flavor: `[${typeLabel}]`,
     content: html ?? ""
-  });
+  }, { messageMode: game.settings.get("core", "messageMode") });
 }

@@ -70,11 +70,11 @@ export function initializeInitiativeSystem() {
         const voidCurrent = actor.system?.rings?.void?.value ?? 0;
 
         if (voidCurrent > 0) {
-          const confirmed = await Dialog.confirm({
-            title: `Spend Void Point for Initiative - ${actor.name}`,
+          const confirmed = await foundry.applications.api.DialogV2.confirm({
+            window: { title: `Spend Void Point for Initiative - ${actor.name}` },
             content: `<p>Spend a Void Point to add +10 to ${actor.name}'s initiative roll?</p>`,
-            yes: () => true,
-            no: () => false
+            yes: { callback: () => true },
+            no: { callback: () => false }
           });
 
           if (confirmed) {
