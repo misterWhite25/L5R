@@ -1,17 +1,17 @@
 {
   "name": "l5r4-enhanced",
   "version": "3.2.1",
-  "description": "L5R 4e - Tonio, independent Foundry VTT system",
+  "description": "L5R, fourth edition system for Foundry VTT",
   "author": "Tonio (misterWhite25)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/misterWhite25/L5RFFG.git"
+    "url": "https://github.com/misterWhite25/L5R.git"
   },
   "bugs": {
-    "url": "https://github.com/misterWhite25/L5RFFG/issues"
+    "url": "https://github.com/misterWhite25/L5R/issues"
   },
-  "homepage": "https://github.com/misterWhite25/L5RFFG#readme",
+  "homepage": "https://github.com/misterWhite25/L5R#readme",
   "scripts": {
     "build": "npm run build:css && npm run lint:fix && npm run format && npm run check",
     "build:css": "sass --no-source-map scss/l5r4-enhanced.scss dist/l5r4-enhanced.css",

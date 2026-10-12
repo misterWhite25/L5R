@@ -1,6 +1,6 @@
-# L5RFFG — L5R 4e — Tonio
+# L5R
 
-Projet personnel et indépendant pour jouer à **La Légende des Cinq Anneaux, quatrième édition**, dans Foundry VTT. Le nom du dépôt L5RFFG ne désigne pas la cinquième édition FFG.
+Projet personnel et indépendant pour jouer à **La Légende des Cinq Anneaux, quatrième édition**, dans Foundry VTT.
 
 Développé et maintenu par **Tonio (misterWhite25)** avec l'assistance de **Codex Astra**. Le premier objectif est l'adaptation à **Foundry VTT v14**, puis le développement de nos compendiums.
 

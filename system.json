@@ -1,6 +1,6 @@
 {
   "id": "l5r4-enhanced",
-  "title": "L5R 4e - Tonio",
+  "title": "L5R",
   "description": "Système indépendant L5R quatrième édition. Adaptation Foundry VTT v14 en préparation.",
   "authors": [
     {
@@ -12,7 +12,7 @@
       "url": "https://github.com/ernieayala/l5r4"
     }
   ],
-  "url": "https://github.com/misterWhite25/L5RFFG",
+  "url": "https://github.com/misterWhite25/L5R",
   "compatibility": {
     "minimum": 13,
     "verified": 13,
