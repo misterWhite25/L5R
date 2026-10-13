@@ -35,7 +35,7 @@ Le manifest cible exclusivement v14. L'identifiant `l5r4-enhanced` est conservé
   - Rechargement du navigateur et persistance des valeurs sauvegardées.
 - Aucune erreur JavaScript dans ces scénarios. Les avertissements de rendu logiciel WebGL sont liés au navigateur automatisé. Sequencer/JB2A sont absents de ce monde : animations optionnelles non testées.
 
-Les assertions de confidentialité portent sur les documents créés : elles ne remplacent pas une recette multijoueur sur deux navigateurs. La suite Quench héritée n'a pas été exécutée. Aucun monde v13 existant ni compendium externe n'a été migré pendant cette validation. Aucun paquet de release n'a été publié.
+La première recette vérifiait la confidentialité des documents créés. La recette complémentaire ci-dessous vérifie désormais la visibilité réelle sur deux navigateurs. La suite Quench héritée n'a pas été exécutée. Aucun monde v13 existant ni compendium externe n'a été migré pendant cette validation. Aucun paquet de release n'a été publié.
 
 ## Démonstration Ubuntu
 
@@ -85,3 +85,35 @@ Les tests navigateur nécessitent le serveur ci-dessus et le compte Gamemaster l
 - [Roll](https://foundryvtt.com/api/v14/classes/foundry.dice.Roll.html).
 
 Les signatures ont également été confrontées au code officiel de l'installation 14.367 et aux essais d'exécution. L'organisation des tests isolés reprend les conventions de StarWarsFFG.
+
+
+## Recette complémentaire du 13 octobre 2026
+
+Les six outils de fiche utilisent le registre `foundry.applications.instances` et `bringToFront`. Leur réouverture retrouve la même fenêtre, sans duplication ; le gestionnaire d'états actualise son contenu.
+
+Seul le MJ actif exécute la migration. Les erreurs de lecture ou d'écriture remontent au coordinateur : il conserve le précédent checkpoint en cas d'échec et réessaie au prochain lancement. Les documents déjà traités gardent leur marqueur pour éviter de recommencer les transformations réussies. Les tokens non liés ont leur propre checkpoint dans leur ActorDelta, indépendant des flags hérités du personnage. Les compendiums externes ou verrouillés sont exclus des écritures.
+
+Le remappage de schéma lit les données source, écrit seulement les champs concernés et utilise les opérateurs de suppression de Foundry pour retirer les clés obsolètes. Il ne sauvegarde pas les bonus temporaires des effets dans les caractéristiques de base. Les comparaisons de version utilisent l'utilitaire Foundry.
+
+Validation complémentaire : **1 037 tests unitaires réussis**, lint JavaScript et compilation Sass réussis ; **15 scénarios navigateur réussis** sur Foundry 14.367. Ces scénarios ont été exécutés contre une archive extraite dans un répertoire indépendant du dépôt :
+
+- Réouverture des six outils, tous les types de fiches PJ/PNJ et objets, sauvegarde réelle de formulaires.
+- Migration d'anciennes compétences et clés de schéma ; simulation d'un refus d'écriture, conservation du checkpoint puis reprise réussie.
+- Conversion native d'effets de type v13 (changements numériques et durée), import d'un compendium de monde et copie vers un acteur par le gestionnaire de dépôt de fiche.
+- Migration des objets d'un token non lié, sans modification de l'acteur de base.
+- Jets publics, MJ, aveugles et personnels vus par deux clients ; jet personnel du joueur et jet aveugle caché à son auteur ; initiative de combatant caché.
+- Persistance des données, effets et confidentialité après rechargement.
+- Désactivation sûre des animations en l'absence de Sequencer/JB2A.
+
+Le test de dépôt appelle le gestionnaire utilisé par les fiches, avec un UUID de compendium réel. Il ne reproduit pas un mouvement de souris entre les fenêtres. Les fixtures anciennes sont synthétiques et représentatives ; cette recette n'est pas une migration d'une campagne v13 réelle. Aucun monde de jeu existant ni compendium externe n'a été modifié. Le rendu animé avec Sequencer/JB2A installés reste à vérifier si ces modules sont retenus.
+
+### Paquet local et reproduction
+
+`npm run package:local` compile les styles et crée une archive locale dans `test-results/package/`. Le script vérifie les fichiers du manifeste et les imports JavaScript relatifs, conserve licence et crédits, et ne publie rien. L'intégration Quench héritée et ses fixtures sont incluses pour conserver cette option ; Quench n'a pas été exécuté.
+
+La recette complémentaire s'exécute avec `npm run test:acceptance-v14`. Elle exige un monde **jetable** d'identifiant `l5r-v14-acceptance`, intitulé `L5R v14 Acceptance TEST`, sur le port 30005, avec le système extrait de l'archive et le MJ `Gamemaster` sans mot de passe. `FOUNDRY_ACCEPTANCE_URL` permet de changer l'adresse. Le script refuse les autres mondes et crée des documents de test ; les relances ajoutent de nouvelles fixtures. Le second utilisateur `Acceptance Player` est créé automatiquement. Résultats : `test-results/acceptance-v14/results.json`.
+
+
+### Correction du thème clair des fiches
+
+Les fiches PJ et PNJ appliquent `themed theme-light` dès leur premier rendu. Le fond seul passait auparavant en clair tandis que les variables de texte et de champs étaient héritées du thème sombre global. Les pastilles d'anneaux suivent maintenant la classe de thème de la fiche, et non un ancêtre comme `body`. Vérification navigateur en thème Foundry sombre : première ouverture et réouverture de nouvelles fiches PJ et PNJ ; textes et champs mesurés en `rgb(34, 34, 34)` et captures vérifiées.

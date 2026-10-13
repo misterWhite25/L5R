@@ -39,6 +39,8 @@ export async function normalizeItems(docs, label) {
         type: doc.type,
         error: e
       });
+
+      throw e;
     }
   }
 }

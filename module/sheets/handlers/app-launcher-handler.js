@@ -5,9 +5,9 @@
  * Implements singleton window management to prevent duplicate application instances per actor.
  *
  * Foundry VTT Integration:
- * - Uses Foundry v13+ Application v2 singleton pattern via ui.windows registry
+ * - Uses Foundry v13+ Application v2 singleton pattern via foundry.applications.instances registry
  * - Integrates with event delegation system (receives context, event, element from sheets)
- * - Leverages bringToTop() for window focus management
+ * - Leverages bringToFront() for window focus management
  * - Uses foundry.utils.mergeObject pattern in target applications
  *
  * Responsibilities:
@@ -41,7 +41,7 @@ import WealthManagerApplication from "../../apps/wealth-manager.js";
  * - event: DOM event (preventDefault called if present)
  * - element: Target DOM element (unused in these handlers)
  *
- * All methods perform singleton checks against ui.windows registry before instantiation.
+ * All methods perform singleton checks against foundry.applications.instances registry before instantiation.
  */
 export class AppLauncherHandler {
   /**
@@ -61,12 +61,13 @@ export class AppLauncherHandler {
     event?.preventDefault?.();
 
     try {
-      const existingApp = Object.values(ui.windows).find(
-        app => app instanceof ArmorConfigApplication && app.actor.id === context.actor.id
+      const existingApp = Array.from(foundry.applications.instances.values()).find(
+        app =>
+          app.rendered && app instanceof ArmorConfigApplication && app.actor.id === context.actor.id
       );
 
       if (existingApp) {
-        existingApp.bringToTop();
+        existingApp.bringToFront();
       } else {
         const armorConfig = new ArmorConfigApplication(context.actor);
         await armorConfig.render(true);
@@ -97,12 +98,15 @@ export class AppLauncherHandler {
     event?.preventDefault?.();
 
     try {
-      const existingApp = Object.values(ui.windows).find(
-        app => app instanceof CombatConfigApplication && app.actor.id === context.actor.id
+      const existingApp = Array.from(foundry.applications.instances.values()).find(
+        app =>
+          app.rendered &&
+          app instanceof CombatConfigApplication &&
+          app.actor.id === context.actor.id
       );
 
       if (existingApp) {
-        existingApp.bringToTop();
+        existingApp.bringToFront();
       } else {
         const combatConfig = new CombatConfigApplication(context.actor);
         await combatConfig.render(true);
@@ -136,12 +140,13 @@ export class AppLauncherHandler {
     event?.preventDefault?.();
 
     try {
-      const existingApp = Object.values(ui.windows).find(
-        app => app instanceof ConditionManager && app.actor.id === context.actor.id
+      const existingApp = Array.from(foundry.applications.instances.values()).find(
+        app => app.rendered && app instanceof ConditionManager && app.actor.id === context.actor.id
       );
 
       if (existingApp) {
-        existingApp.render(true); // Re-render to refresh checkbox state
+        await existingApp.render(true); // Re-render to refresh checkbox state
+        existingApp.bringToFront();
       } else {
         const conditionManager = new ConditionManager(context.actor);
         await conditionManager.render(true);
@@ -172,14 +177,15 @@ export class AppLauncherHandler {
     event?.preventDefault?.();
 
     try {
-      // Check ui.windows registry for existing WoundConfigApplication instance for this actor
-      const existingApp = Object.values(ui.windows).find(
-        app => app instanceof WoundConfigApplication && app.actor.id === context.actor.id
+      // Check foundry.applications.instances registry for existing WoundConfigApplication instance for this actor
+      const existingApp = Array.from(foundry.applications.instances.values()).find(
+        app =>
+          app.rendered && app instanceof WoundConfigApplication && app.actor.id === context.actor.id
       );
 
       if (existingApp) {
         // Focus existing window instead of creating duplicate
-        existingApp.bringToTop();
+        existingApp.bringToFront();
       } else {
         // No existing instance - create and render new application
         const woundConfig = new WoundConfigApplication(context.actor);
@@ -211,14 +217,15 @@ export class AppLauncherHandler {
     event?.preventDefault?.();
 
     try {
-      // Check ui.windows registry for existing XpManagerApplication instance for this actor
-      const existingApp = Object.values(ui.windows).find(
-        app => app instanceof XpManagerApplication && app.actor.id === context.actor.id
+      // Check foundry.applications.instances registry for existing XpManagerApplication instance for this actor
+      const existingApp = Array.from(foundry.applications.instances.values()).find(
+        app =>
+          app.rendered && app instanceof XpManagerApplication && app.actor.id === context.actor.id
       );
 
       if (existingApp) {
         // Focus existing window instead of creating duplicate
-        existingApp.bringToTop();
+        existingApp.bringToFront();
       } else {
         // No existing instance - create and render new application
         const xpManager = new XpManagerApplication(context.actor);
@@ -250,14 +257,17 @@ export class AppLauncherHandler {
     event?.preventDefault?.();
 
     try {
-      // Check ui.windows registry for existing WealthManagerApplication instance for this actor
-      const existingApp = Object.values(ui.windows).find(
-        app => app instanceof WealthManagerApplication && app.actor.id === context.actor.id
+      // Check foundry.applications.instances registry for existing WealthManagerApplication instance for this actor
+      const existingApp = Array.from(foundry.applications.instances.values()).find(
+        app =>
+          app.rendered &&
+          app instanceof WealthManagerApplication &&
+          app.actor.id === context.actor.id
       );
 
       if (existingApp) {
         // Focus existing window instead of creating duplicate
-        existingApp.bringToTop();
+        existingApp.bringToFront();
       } else {
         // No existing instance - create and render new application
         const wealthManager = new WealthManagerApplication(context.actor);

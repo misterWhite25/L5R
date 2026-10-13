@@ -134,7 +134,9 @@ export default class L5R4NpcSheet extends BaseActorSheet {
         c => c !== "pc" && c !== "npc" && c !== "l5r4"
       ),
       "l5r4",
-      "npc"
+      "npc",
+      "themed",
+      "theme-light"
     ],
     position: { ...(super.DEFAULT_OPTIONS.position ?? {}), width: 840 },
     form: { ...(super.DEFAULT_OPTIONS.form ?? {}), submitOnChange: true }

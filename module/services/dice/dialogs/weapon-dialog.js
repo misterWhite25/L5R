@@ -69,6 +69,7 @@ export async function GetWeaponOptions(weaponName, attackRaises = 0, actor = nul
   const content = await R(DIALOG_TEMPLATES.rollModifiers, { weapon: true, attackRaises, noVoid });
   try {
     const result = await DIALOG.prompt({
+      classes: ["themed", "theme-light", "l5r4-roll-dialog"],
       window: {
         title: `${game.i18n.localize("l5r4.ui.mechanics.rolls.damageRoll")} (${weaponName})`
       },

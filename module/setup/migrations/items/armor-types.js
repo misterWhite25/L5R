@@ -49,6 +49,8 @@ export async function migrateArmorTypes(docs, label) {
         name: item.name,
         err
       });
+
+      throw err;
     }
   }
 

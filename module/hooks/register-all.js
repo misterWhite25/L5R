@@ -20,6 +20,7 @@
  * @requires Foundry VTT v13+
  */
 
+import { registerGMDifficulty } from "../services/gm-difficulty.js";
 import { registerChatDamageButtons } from "./chat-damage-buttons.js";
 import { registerCombatVoidSpending } from "./combat-void-spending.js";
 import { registerSpellMemorizationHooks } from "./spell-memorization.js";
@@ -47,6 +48,7 @@ import { initializeAnimations } from "../services/animations/initialize.js";
  * @returns {void}
  */
 export function registerAllHooks() {
+  registerGMDifficulty();
   // Animation system: Visual effects for stances and conditions
   initializeAnimations();
 

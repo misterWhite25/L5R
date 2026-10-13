@@ -51,13 +51,6 @@
         inset: -4px;
         position: absolute;
 
-        .theme-light & {
-          background-image: url("../../../ui/parchment.jpg");
-        }
-
-        .theme-dark & {
-          background-color: var(--color-cool-5-90);
-        }
       }
 
       &.ring-rank-fire {
@@ -583,5 +576,22 @@
         }
       }
     }
+  }
+}
+
+
+// Choose the sheet's theme rather than matching a theme on an ancestor such as body.
+.l5r4.pc.theme-light,
+.l5r4.npc.theme-light {
+  .traits-rings .ring-rank::before {
+    background-color: var(--color-light-2, #e8e3d4);
+    background-image: url("../../../ui/parchment.jpg");
+  }
+}
+
+.l5r4.pc.theme-dark,
+.l5r4.npc.theme-dark {
+  .traits-rings .ring-rank::before {
+    background-color: var(--color-cool-5-90);
   }
 }

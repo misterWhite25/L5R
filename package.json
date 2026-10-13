@@ -37,7 +37,9 @@
     "test:coverage": "vitest run --coverage tests/unit",
     "pretest": "npm run deps:circular",
     "prepare": "husky",
-    "test:foundry-v14": "node scripts/test-foundry-v14.cjs"
+    "test:foundry-v14": "node scripts/test-foundry-v14.cjs",
+    "package:local": "npm run build:css && python3 scripts/package-system.py",
+    "test:acceptance-v14": "node scripts/test-v14-acceptance.cjs"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "1.0.0",

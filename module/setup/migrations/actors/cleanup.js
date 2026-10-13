@@ -70,6 +70,8 @@ export async function cleanupLegacyFields(docs, label) {
         type: doc.type,
         error: e
       });
+
+      throw e;
     }
   }
 }

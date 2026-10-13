@@ -69,6 +69,8 @@ export async function migrateBowsToWeapons(docs, label) {
         name: item.name,
         err
       });
+
+      throw err;
     }
   }
 }

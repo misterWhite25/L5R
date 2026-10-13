@@ -97,6 +97,7 @@ export async function getNpcRollOptions(
   });
   try {
     const result = await DIALOG.prompt({
+      classes: ["themed", "theme-light", "l5r4-roll-dialog"],
       window: { title: rollName },
       content,
       ok: {

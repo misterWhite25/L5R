@@ -94,6 +94,7 @@ export async function GetSpellCastOptions(spellName, ringName, actor) {
 
   return await new Promise(resolve => {
     new DIALOG({
+      classes: ["themed", "theme-light", "l5r4-roll-dialog"],
       window: {
         title: game.i18n.format("l5r4.ui.mechanics.rolls.castSpell", {
           spell: spellName,

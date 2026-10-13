@@ -6,7 +6,7 @@
  */
 
 import { SYS_ID } from "../../../config/constants.js";
-import { getByPath, setByPath, deleteByPath } from "../utils/helpers.js";
+import { getByPath } from "../utils/helpers.js";
 import { SCHEMA_MAP } from "./schema-map.js";
 
 /**
@@ -37,20 +37,23 @@ export function buildSchemaUpdate(doc) {
     return null;
   }
 
-  const patch = { system: foundry.utils.deepClone(doc.system ?? {}) };
+  const source = { system: doc._source?.system ?? doc.system ?? {} };
+  const patch = {};
   let touched = false;
 
   for (const rule of rules) {
-    const fromVal = getByPath(patch, rule.from);
-    const toVal = getByPath(patch, rule.to);
+    const fromVal = getByPath(source, rule.from);
+    const toVal = getByPath(source, rule.to);
 
     const hasValidTarget = toVal !== undefined && toVal !== "";
     if (fromVal === undefined || hasValidTarget) {
       continue;
     }
 
-    setByPath(patch, rule.to, fromVal);
-    deleteByPath(patch, rule.from);
+    patch[rule.to] = foundry.utils.deepClone(fromVal);
+    const parts = rule.from.split(".");
+    const field = parts.pop();
+    patch[`${parts.join(".")}.-=${field}`] = null;
     touched = true;
   }
 
@@ -58,7 +61,7 @@ export function buildSchemaUpdate(doc) {
     return null;
   }
 
-  return { system: patch.system };
+  return patch;
 }
 
 /**
@@ -66,7 +69,7 @@ export function buildSchemaUpdate(doc) {
  *
  * Iterates through documents and applies SCHEMA_MAP transformations (e.g., snake_case →
  * camelCase field names). Each document is evaluated independently and updated only if
- * changes are needed. Errors are logged but don't halt the batch process.
+ * changes are needed. Errors are logged and propagated so failed migrations can be retried.
  *
  * @param {Document[]} docs - Array of Actor or Item documents to process
  * @param {string} label - Migration context label for console logging
@@ -86,6 +89,8 @@ export async function applySchemaMapToDocs(docs, label) {
         type: doc.type,
         error: e
       });
+
+      throw e;
     }
   }
 }

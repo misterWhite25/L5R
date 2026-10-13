@@ -51,9 +51,7 @@ async function listDir(dirPath) {
     return files;
   } catch (err) {
     console.warn(`${SYS_ID}`, "Failed to browse directory", { dirPath, err });
-    const empty = new Set();
-    dirCache.set(dirPath, empty);
-    return empty;
+    throw err;
   }
 }
 
@@ -192,6 +190,8 @@ export async function runIconPathMigration() {
         changed++;
       } catch (err) {
         console.warn(`${SYS_ID}`, "Failed to update actor img", { id: a.id, err });
+
+        throw err;
       }
     }
   }
@@ -205,6 +205,8 @@ export async function runIconPathMigration() {
         changed++;
       } catch (err) {
         console.warn(`${SYS_ID}`, "Failed to update item img", { id: i.id, err });
+
+        throw err;
       }
     }
   }
@@ -248,6 +250,8 @@ export async function migrateEmbeddedItemIcons(docs, label) {
         name: item.name,
         err
       });
+
+      throw err;
     }
   }
 
@@ -275,6 +279,9 @@ export async function migrateCompendiumIconPaths() {
   let changed = 0;
   const packs = game.packs?.contents ?? [];
   for (const pack of packs) {
+    if (pack.metadata?.packageType !== "world" || pack.locked) {
+      continue;
+    }
     const docName = pack.documentName ?? pack.metadata?.type ?? pack.metadata?.documentName;
     if (docName !== "Actor" && docName !== "Item") {
       continue;
@@ -293,7 +300,8 @@ export async function migrateCompendiumIconPaths() {
         collection: pack.collection,
         err
       });
-      continue;
+
+      throw err;
     }
 
     for (const doc of docs) {
@@ -324,6 +332,8 @@ export async function migrateCompendiumIconPaths() {
             collection: pack.collection,
             err
           });
+
+          throw err;
         }
       }
     }

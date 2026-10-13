@@ -491,7 +491,9 @@ export default class L5R4PcSheet extends BaseActorSheet {
         c => c !== "pc" && c !== "npc" && c !== "l5r4"
       ),
       "l5r4",
-      "pc"
+      "pc",
+      "themed",
+      "theme-light"
     ],
     position: { ...(BaseActorSheet.DEFAULT_OPTIONS.position ?? {}), width: 870 },
     form: {

@@ -81,6 +81,7 @@ export async function GetTraitRollOptions(traitName, actor) {
         : `l5r4.ui.mechanics.traits.${lowerTrait}`;
     const traitLabel = game.i18n.localize(traitKey);
     const result = await DIALOG.prompt({
+      classes: ["themed", "theme-light", "l5r4-roll-dialog"],
       window: {
         title: `${game.i18n.localize("l5r4.ui.mechanics.rolls.traitRoll")} (${traitLabel})`
       },

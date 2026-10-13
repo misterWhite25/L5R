@@ -862,14 +862,6 @@ body > * {
   inset: -4px;
   position: absolute;
 }
-.theme-light .l5r4.pc .traits-rings .ring-rank::before,
-.theme-light .l5r4.npc .traits-rings .ring-rank::before {
-  background-image: url("../../../ui/parchment.jpg");
-}
-.theme-dark .l5r4.pc .traits-rings .ring-rank::before,
-.theme-dark .l5r4.npc .traits-rings .ring-rank::before {
-  background-color: var(--color-cool-5-90);
-}
 .l5r4.pc .traits-rings .ring-rank.ring-rank-fire span,
 .l5r4.npc .traits-rings .ring-rank.ring-rank-fire span {
   background-color: rgb(var(--fire-ring-color), 0.1);
@@ -1453,6 +1445,17 @@ body > * {
 .l5r4.pc .traits-rings .void-dot.-filled:hover,
 .l5r4.npc .traits-rings .void-dot.-filled:hover {
   background-color: #888;
+}
+
+.l5r4.pc.theme-light .traits-rings .ring-rank::before,
+.l5r4.npc.theme-light .traits-rings .ring-rank::before {
+  background-color: var(--color-light-2, #e8e3d4);
+  background-image: url("../../../ui/parchment.jpg");
+}
+
+.l5r4.pc.theme-dark .traits-rings .ring-rank::before,
+.l5r4.npc.theme-dark .traits-rings .ring-rank::before {
+  background-color: var(--color-cool-5-90);
 }
 
 /**

@@ -53,7 +53,7 @@ import L5R4ItemSheet from "../module/sheets/item-sheet.js";
 import L5R4PcSheet from "../module/sheets/pc-sheet.js";
 import L5R4NpcSheet from "../module/sheets/npc-sheet.js";
 import { preloadTemplates } from "../module/setup/preload-templates.js";
-import { runMigrations } from "../module/setup/migrations.js";
+import { ensureSystemMigration } from "../module/setup/migration-runner.js";
 import { registerSettings } from "../module/setup/register-settings.js";
 import { registerHandlebarsHelpers } from "../module/setup/register-handlebars.js";
 import { initializeInitiativeSystem } from "../module/services/initiative.js";
@@ -208,32 +208,5 @@ Hooks.once("ready", async () => {
 
   await registerQuenchIfAvailable();
 
-  if (game.user?.isGM) {
-    const currentVersion = game.system?.version ?? "0.0.0";
-    const last = game.settings.get(SYS_ID, "lastMigratedVersion") ?? "0.0.0";
-    const runFlag = game.settings.get(SYS_ID, "runMigration") ?? false;
-    const forceFlag = game.settings.get(SYS_ID, "forceMigration") ?? false;
-    const newer = (foundry?.utils?.isNewerVersion?.(currentVersion, last)) ?? (currentVersion !== last);
-
-    if (runFlag && (newer || forceFlag)) {
-      try {
-        console.log(`${SYS_ID}`, "Running migrations", { 
-          from: last, 
-          to: currentVersion, 
-          forced: forceFlag,
-          versionChanged: newer 
-        });
-        await runMigrations(last, currentVersion);
-      } catch (e) {
-        console.warn(`${SYS_ID}`, "runMigrations failed", e);
-      } finally {
-        try {
-          await game.settings.set(SYS_ID, "lastMigratedVersion", currentVersion);
-          if (forceFlag) {
-            await game.settings.set(SYS_ID, "forceMigration", false);
-          }
-        } catch (_e) {}
-      }
-    }
-  }
+  await ensureSystemMigration();
 });

@@ -143,6 +143,8 @@ export async function migrateLegacyNpcWounds(docs, label) {
         name: actor.name,
         err
       });
+
+      throw err;
     }
   }
 

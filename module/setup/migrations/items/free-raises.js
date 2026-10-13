@@ -48,6 +48,8 @@ export async function migrateFreeRaisesDefaults(docs, label) {
         type: item.type,
         err
       });
+
+      throw err;
     }
   }
 

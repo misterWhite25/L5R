@@ -1,3 +1,4 @@
+import { getGMDifficulty, resolveGMDifficulty, difficultyFlags } from "../../gm-difficulty.js";
 /**
  * Trait Roll Service
  *
@@ -117,6 +118,7 @@ export async function TraitRoll({
   unskilled = false,
   actor = null
 } = {}) {
+  let gmDifficulty = getGMDifficulty();
   const messageTemplate = CHAT_TEMPLATES.simpleRoll;
   const labelTrait = String(traitName).toLowerCase();
   const traitKey =
@@ -139,6 +141,7 @@ export async function TraitRoll({
   // Show dialog by default (askForOptions=true), skip if shift-clicked (askForOptions=false)
   if (askForOptions) {
     const check = await GetTraitRollOptions(traitName, targetActor);
+    gmDifficulty = getGMDifficulty();
     if (check?.cancelled) {
       return;
     }
@@ -149,7 +152,7 @@ export async function TraitRoll({
     keepMod = toInt(check.keepMod);
     totalMod = toInt(check.totalMod);
 
-    userTN = toInt(check.tn);
+    userTN = resolveGMDifficulty(toInt(check.tn), gmDifficulty);
     const userFreeRaises = toInt(check.freeRaises) || 0;
     userRaises = toInt(check.raises);
     if (userTN || userRaises || userFreeRaises) {
@@ -242,7 +245,7 @@ export async function TraitRoll({
   const armorTNPenalty = getArmorTNPenalty(targetActor, null, traitName);
   const conditionTNPenalty = getConditionTNPenalty(targetActor); // Fatigued: +5 TN
   const baseTN = calculateEffectiveTN(
-    userTN,
+    resolveGMDifficulty(userTN, gmDifficulty),
     userRaises,
     0,
     0, // Never apply wound penalty to TN
@@ -254,7 +257,11 @@ export async function TraitRoll({
   const content = await R(messageTemplate, { flavor, roll: rollHtml, tnResult });
 
   try {
-    return await roll.toMessage({ speaker: ChatMessage.getSpeaker(), content });
+    return await roll.toMessage({
+      speaker: ChatMessage.getSpeaker(),
+      content,
+      flags: difficultyFlags(gmDifficulty, effTN)
+    });
   } catch (err) {
     console.error(`${SYS_ID}`, "TraitRoll: Failed to post chat message after roll", {
       err,

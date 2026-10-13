@@ -1,3 +1,4 @@
+import { getGMDifficulty, resolveGMDifficulty, difficultyFlags } from "./gm-difficulty.js";
 /**
  * Fear Test Service
  *
@@ -48,6 +49,8 @@ import { toInt } from "../utils/type-coercion.js";
  * @private
  */
 async function executeFearTest({ character, tn, modifier = 0, fearRank, targetInfo = "" } = {}) {
+  const gmDifficulty = getGMDifficulty();
+  tn = resolveGMDifficulty(tn, gmDifficulty);
   const willpower = toInt(character.system?.traits?.wil ?? 0);
   if (willpower <= 0) {
     ui.notifications?.warn(
@@ -166,6 +169,7 @@ async function executeFearTest({ character, tn, modifier = 0, fearRank, targetIn
   try {
     return await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: character }),
+      flags: difficultyFlags(gmDifficulty, tn),
       content,
       sound: CONFIG.sounds.dice
     });

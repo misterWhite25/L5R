@@ -1,3 +1,4 @@
+import { getGMDifficulty, resolveGMDifficulty, difficultyFlags } from "../../gm-difficulty.js";
 /**
  * Spell Casting Roll Service
  *
@@ -201,7 +202,8 @@ export async function SpellCastRoll({ actor, spell, woundPenalty = 0, showDialog
 
   // Calculate effective TN: baseTN + (raises × 5) + condition TN penalty
   const conditionTNPenalty = getConditionTNPenalty(actor); // Fatigued: +5 TN
-  const baseTNWithConditions = baseTN + conditionTNPenalty;
+  const gmDifficulty = getGMDifficulty();
+  const baseTNWithConditions = resolveGMDifficulty(baseTN, gmDifficulty) + conditionTNPenalty;
   const effTN = calculateEffectiveTN(
     baseTNWithConditions,
     options.raises,
@@ -244,7 +246,11 @@ export async function SpellCastRoll({ actor, spell, woundPenalty = 0, showDialog
   });
 
   try {
-    const message = await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), content });
+    const message = await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content,
+      flags: difficultyFlags(gmDifficulty, effTN)
+    });
 
     // Consume slot AFTER roll succeeds
     // Per L5R4 rules: slot consumed when Spell Casting Roll is made (not before)

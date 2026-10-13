@@ -1,3 +1,4 @@
+import { getGMDifficulty, resolveGMDifficulty, difficultyFlags } from "../../gm-difficulty.js";
 /**
  * Simple Roll Service
  *
@@ -301,7 +302,8 @@ export async function SimpleRoll({
   const rollHtml = await roll.render();
 
   // Use finalTN calculated earlier (already includes autoTN resolution for attack rolls)
-  const baseTN = finalTN;
+  const gmDifficulty = getGMDifficulty();
+  const baseTN = resolveGMDifficulty(finalTN, gmDifficulty);
 
   // Calculate effective TN: baseTN + (raises × 5) + condition penalty + armor penalty (if applicable)
   // Only apply condition and armor TN penalties when there's an actual target (baseTN > 0)
@@ -370,5 +372,9 @@ export async function SimpleRoll({
       }
     : {};
 
-  return roll.toMessage({ speaker: ChatMessage.getSpeaker(), content, flags });
+  return roll.toMessage({
+    speaker: ChatMessage.getSpeaker(),
+    content,
+    flags: difficultyFlags(gmDifficulty, effTN, flags)
+  });
 }

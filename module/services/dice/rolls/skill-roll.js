@@ -1,3 +1,4 @@
+import { getGMDifficulty, resolveGMDifficulty, difficultyFlags } from "../../gm-difficulty.js";
 /**
  * Skill Roll Service
  *
@@ -269,7 +270,8 @@ export async function SkillRoll({
   const rollHtml = await roll.render();
 
   // Use finalTN calculated earlier (already includes autoTN resolution for attack rolls)
-  const baseTN = finalTN;
+  const gmDifficulty = getGMDifficulty();
+  const baseTN = resolveGMDifficulty(finalTN, gmDifficulty);
 
   // Use Free Raises from dialog and clamp declared Raises to Void Ring limit
   const freeRaises = toInt(check.freeRaises) || 0;
@@ -357,7 +359,11 @@ export async function SkillRoll({
 
   // Post roll to chat, handle errors gracefully
   try {
-    return await roll.toMessage({ speaker: ChatMessage.getSpeaker(), content, flags });
+    return await roll.toMessage({
+      speaker: ChatMessage.getSpeaker(),
+      content,
+      flags: difficultyFlags(gmDifficulty, effTN, flags)
+    });
   } catch (err) {
     console.error(`${SYS_ID}`, "SkillRoll: Failed to post chat message after roll", {
       err,

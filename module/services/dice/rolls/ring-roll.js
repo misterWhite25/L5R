@@ -1,3 +1,4 @@
+import { getGMDifficulty, resolveGMDifficulty, difficultyFlags } from "../../gm-difficulty.js";
 /**
  * Ring Roll and Spell Casting Service
  *
@@ -363,6 +364,8 @@ export async function RingRoll({
     slotLabel += ` [${ringDisplay} ${game.i18n.localize("l5r4.magic.spells.voidSlot") || "Slot"}]`;
   }
 
+  const gmDifficulty = getGMDifficulty();
+  __tnInput = resolveGMDifficulty(__tnInput, gmDifficulty);
   label += slotLabel;
 
   // Append TN and raises to label if specified
@@ -411,7 +414,11 @@ export async function RingRoll({
 
   // Post to chat with error recovery
   try {
-    const message = await roll.toMessage({ speaker: ChatMessage.getSpeaker(), content });
+    const message = await roll.toMessage({
+      speaker: ChatMessage.getSpeaker(),
+      content,
+      flags: difficultyFlags(gmDifficulty, effTN)
+    });
 
     // Consume spell slots AFTER roll succeeds
     // Per L5R4 rules: slot consumed when Spell Casting Roll is made (not before)

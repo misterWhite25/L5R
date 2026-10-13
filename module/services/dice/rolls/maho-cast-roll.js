@@ -1,3 +1,4 @@
+import { getGMDifficulty, resolveGMDifficulty, difficultyFlags } from "../../gm-difficulty.js";
 /**
  * Maho Casting Roll Service
  *
@@ -161,7 +162,8 @@ export async function MahoCastRoll({ actor, spell, woundPenalty = 0, showDialog 
   // Calculate effective TN with declared raises and condition penalties
   const totalRaises = options.raises + freeRaises;
   const conditionTNPenalty = getConditionTNPenalty(actor); // Fatigued: +5 TN
-  const baseTNWithConditions = baseTN + conditionTNPenalty;
+  const gmDifficulty = getGMDifficulty();
+  const baseTNWithConditions = resolveGMDifficulty(baseTN, gmDifficulty) + conditionTNPenalty;
   const effTN = calculateEffectiveTN(
     baseTNWithConditions,
     options.raises,
@@ -223,7 +225,11 @@ export async function MahoCastRoll({ actor, spell, woundPenalty = 0, showDialog 
   });
 
   try {
-    return await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), content });
+    return await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content,
+      flags: difficultyFlags(gmDifficulty, effTN)
+    });
   } catch (err) {
     console.error(`${SYS_ID}`, "MahoCastRoll: Failed to post chat message", {
       err,

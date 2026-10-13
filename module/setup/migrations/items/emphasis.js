@@ -204,6 +204,8 @@ export async function migrateEmphasisStringToArray(docs, label) {
         name: item.name,
         err
       });
+
+      throw err;
     }
   }
 

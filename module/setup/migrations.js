@@ -36,8 +36,8 @@
  * - Uses diff: false for type changes (full replacement required)
  *
  * Safety Notes:
- * - All migrations wrapped in try/catch to prevent cascade failures
- * - Logs failures to console with document context for manual review
+ * - Failed migration steps propagate to the coordinator for retry
+ * - Logs failures with document context; no completion checkpoint on failure
  * - Non-destructive: preserves data when target fields already populated
  * - Idempotent: safe to run multiple times on same data
  *
@@ -113,12 +113,20 @@ import {
  * @export
  */
 export async function runMigrations(fromVersion, toVersion) {
-  if (!game.user?.isGM) {
+  if (!game.user?.isGM || game.users?.activeGM?.id !== game.user.id) {
     return;
   }
 
   // Filter out already-migrated documents to ensure true idempotency
-  const unmigratedActors = game.actors.contents.filter(doc => !hasBeenMigrated(doc, toVersion));
+  const actors = new Map(game.actors.contents.map(actor => [actor.uuid, actor]));
+  for (const scene of game.scenes ?? []) {
+    for (const token of scene.tokens ?? []) {
+      if (!token.actorLink && token.actor) {
+        actors.set(token.actor.uuid, token.actor);
+      }
+    }
+  }
+  const unmigratedActors = [...actors.values()].filter(doc => !hasBeenMigrated(doc, toVersion));
   const unmigratedItems = game.items.contents.filter(doc => !hasBeenMigrated(doc, toVersion));
 
   await applySchemaMapToDocs(unmigratedActors, "world-actors");
@@ -152,7 +160,10 @@ export async function runMigrations(fromVersion, toVersion) {
   }
 
   for (const pack of game.packs) {
-    const docType = pack.metadata?.type ?? pack.documentName;
+    if (pack.metadata?.packageType !== "world" || pack.locked) {
+      continue;
+    }
+    const docType = pack.documentName;
     if (docType !== "Actor" && docType !== "Item") {
       continue;
     }
@@ -201,6 +212,7 @@ export async function runMigrations(fromVersion, toVersion) {
       }
     } catch (e) {
       console.warn(`${SYS_ID}`, "Schema remap pack failed", { pack: pack.collection, error: e });
+      throw e;
     }
   }
 
@@ -209,6 +221,7 @@ export async function runMigrations(fromVersion, toVersion) {
     await migrateCompendiumIconPaths();
   } catch (err) {
     console.warn(`${SYS_ID} | Migration failed`, { fromVersion, toVersion, error: err });
+    throw err;
   }
 }
 

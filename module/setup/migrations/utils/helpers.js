@@ -128,14 +128,15 @@ export function normalizeWoundLevelData(woundData) {
  * @returns {boolean} True if document already migrated to targetVersion or later
  */
 export function hasBeenMigrated(doc, targetVersion) {
-  const migratedVersion = doc?.flags?.[SYS_ID]?.[MIGRATION_FLAG];
+  const flags = doc?.isToken ? doc.token?.delta?._source?.flags : doc?.flags;
+  const migratedVersion = flags?.[SYS_ID]?.[MIGRATION_FLAG];
   if (!migratedVersion) {
     return false;
   }
 
-  // Simple string comparison works for semantic versioning (1.2.3 format)
+  // Foundry compares numeric version components rather than lexicographic strings.
   // Returns true if migratedVersion >= targetVersion
-  return migratedVersion >= targetVersion;
+  return !foundry.utils.isNewerVersion(targetVersion, migratedVersion);
 }
 
 /**
@@ -160,5 +161,7 @@ export async function markAsMigrated(doc, version) {
       version,
       error: err
     });
+
+    throw err;
   }
 }
